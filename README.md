@@ -1,31 +1,87 @@
-*CETA: A Conﬁdence Enhanced Training Approach for Denoising in Distantly Supervised Relation Extraction*
+*Improving Document-level Relation Extraction via Context Guided Mention Integration and Inter-pair Reasoning *
 
 
 
 The information of our mainly hardware environment is:
 
-1. Tesla V100 32GB
-2. CPU  Intel(R) Xeon(R) Gold 5218 CPU @ 2.30GHz
-3. RAM 256GM  
+1.  NVIDIA RTX 3090 24GB
+2. CPU  Intel(R) Xeon(R) Silver 4180 CPU @ 1.80GHz*32
+3. RAM 32GM  
 
-The version of python is: Python 3.6.12 and the implementation steps are as follows:
+The version of python is: Python 3.8.8 and the implementation steps are as follows:
 
-1.  Install dependency python package  
+### 1.  Install dependency python package  
     `pip install -r requirements.txt`
-2.  Prepare the dataset, the pre-trained language model, and the NERToolKit 
-    1. The dataset is the most widely-used NYT10 shown in the paper, This dataset is opensource and public to everyone. Here we donnot provide the download link, because of the double blind principle. We recommend you to download the NYT10 dataset via the project `opennre`, which is an opensource project. The downloaded NYT10 training file, validation file. test file should be named as `nyt10_train.txt`, `nyt10_val.txt`, `nyt10_val.txt` and in the `benchmark` folder. Note that the instance format in the download NYT10 should be:  
-       `["text": "", "relation": "", "h": {"id": "m.071cn", "name": "Syracuse", "pos": [96, 104]}, "t": {"id": "m.02_v74", "name": "Onondaga Lake", "pos": [75, 88]}},...,]`
+### 2.  Prepare the dataset
 
-    2. The version of pre-trained language model adopted by this paper is the `bert-base-uncased`, which is opensource and public to everyone. Here we donnot provide the download link, because of the double blind principle.
-    3. Our relation extraction model needs to use the entity type to construct the special token for encoding the sentence in the entity-aware way, which is presented in our paper. However, the raw NYT10 dataset downloaded from the project `opennre` does not contain the entity type in each instance. The NYT10 dataset is constructed by the opensource NER toolkit StandfordNER. Thus, we use the same StanfordNER toolkit to annotate the entity type for each instance. Note that the StandfordNER Toolkit is implemented by the JAVA language. You should set up the environment which required by StandFordNER. Besides, the resource package `english.all.3class.distsim.crf.ser.gz` and `stanford-ner.jar` adopted by the opensource StandFordNER should be download.
-    4. Then you can set up the config of the relevant path in the file `whole_config.py`.
+The [DocRED](https://www.aclweb.org/anthology/P19-1074/) dataset can be downloaded following the instructions at [link](https://github.com/thunlp/DocRED/tree/master/data). The CDR and GDA datasets can be obtained following the instructions in [edge-oriented graph](https://github.com/fenchri/edge-oriented-graph). The expected structure of files is:
+```
+CGM2IR
+|-- dataset
+|    |-- docred
+|    |    |-- train_annotated.json
+|    |    |-- train_distant.json
+|    |    |-- dev.json
+|    |    |-- test.json
+|    |-- cdr
+|    |    |-- train_filter.data
+|    |    |-- dev_filter.data
+|    |    |-- test_filter.data
+|    |-- gda
+|    |    |-- train.data
+|    |    |-- dev.data
+|    |    |-- test.data
+|-- meta
+|    |-- rel2id.json
+```
+Note that the instance format in the download DocRED should be:  
+```
+    Data Format:
+    {
+    'title',
+    'sents':     [
+                    [word in sent 0],
+                    [word in sent 1]
+                ]
+    'vertexSet': [
+                    [
+                        { 'name': mention_name, 
+                        'sent_id': mention in which sentence, 
+                        'pos': postion of mention in a sentence, 
+                        'type': NER_type}
+                        {anthor mention}
+                    ], 
+                    [anthoer entity]
+                    ]
+    'labels':   [
+                    {
+                    'h': idx of head entity in vertexSet,
+                    't': idx of tail entity in vertexSet,
+                    'r': relation,
+                    'evidence': evidence sentences' id
+                    }
+                ]
+    }
+```
+### 3. Process the dataset
+When finishing the step1 and step2, you can process the data by executing the following command:  
+```
+sh process_DocRED.sh
+sh process_CDR.sh
+sh process_GDA.sh
+```
 
-3.  Process the dataset
-    1. When finishing the step1 and step2, you can process the data by executing the following command:  
-       `sh process_data.sh`
+### 4.Training procedure
+When finishing the step1, step2 and step3, you can train our proposed model by excuting the folloing command:  
+Train the BERT model on DocRED with the following command:
+```
+>> sh scripts/run_bert.sh  # for BERT
+>> sh scripts/run_roberta.sh  # for RoBERTa
+```
 
-4.  Training procedure
-    1. When finishing the step1, step2 and step3, you can train our proposed model by excuting the folloing command:  
-       `sh train_ceta.sh`
-5.  Testing procedure
-    1. When finishing the step1, step2, step3 and step4, you can test our proposed model by excuting the function `test_ceta()`  defined in the file `train_ceta.py`
+Train CDA and GDA model with the following command:
+```
+>> sh scripts/run_cdr.sh  # for CDR
+>> sh scripts/run_gda.sh  # for GDA
+```
+The training loss and evaluation results on the dev set are synced to the wandb dashboard.
