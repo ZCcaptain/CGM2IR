@@ -1,4 +1,4 @@
-*Improving Document-level Relation Extraction via Context Guided Mention Integration and Inter-pair Reasoning *
+## Improving Document-level Relation Extraction via Context Guided Mention Integration and Inter-pair Reasoning
 
 
 
