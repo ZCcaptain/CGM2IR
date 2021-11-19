@@ -1,0 +1,19 @@
+CUDA_VISIBLE_DEVICES=0 python train.py --data_dir ./dataset/docred \
+--transformer_type bert \
+--model_name_or_path bert-base-cased \
+--save_path saved_model/pair_bert.pkt \
+--load_path  "" \
+--train_pickle train_annotated.pkl \
+--dev_pickle dev.pkl \
+--test_pickle test.pkl \
+--train_batch_size 4 \
+--test_batch_size 8 \
+--gradient_accumulation_steps 1 \
+--num_labels 4 \
+--learning_rate 2e-5 \
+--max_grad_norm 1.0 \
+--warmup_ratio 0.06 \
+--num_train_epochs 30.0 \
+--seed 66 \
+--max_mention 23 \
+--num_class 97

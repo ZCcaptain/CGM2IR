@@ -1,0 +1,19 @@
+CUDA_VISIBLE_DEVICES=0 python train_apex.py --data_dir ./dataset/docred \
+--transformer_type roberta \
+--model_name_or_path roberta-large \
+--save_path saved_model/pair_roberta.pkt \
+--load_path  "" \
+--train_pickle train_annotated_roberta.pkl \
+--dev_pickle dev_roberta.pkl \
+--test_pickle test_roberta.pkl \
+--train_batch_size 4 \
+--test_batch_size 8 \
+--gradient_accumulation_steps 1 \
+--num_labels 4 \
+--learning_rate 2e-5 \
+--max_grad_norm 1.0 \
+--warmup_ratio 0.06 \
+--num_train_epochs 30.0 \
+--seed 66 \
+--max_mention 23 \
+--num_class 97
