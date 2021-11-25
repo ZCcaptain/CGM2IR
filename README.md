@@ -6,13 +6,15 @@ The information of our mainly hardware environment is:
 
 1. NVIDIA RTX 3090 24GB
 2. CPU  Intel(R) Xeon(R) Silver 4180 CPU @ 1.80GHz*32
-3. RAM 32GM  
+3. RAM 32GB  
 4. CUDA (tested on 11.3)
 
 The version of python is: Python 3.8.8 and the implementation steps are as follows:
 
 ### Step 1.  Install dependency python package  
-    `pip install -r requirements.txt`
+```
+    pip install -r requirements.txt
+```
 ### Step 2.  Prepare the dataset
 
 The [DocRED](https://www.aclweb.org/anthology/P19-1074/) dataset can be downloaded following the instructions at [link](https://github.com/thunlp/DocRED/tree/master/data). The CDR and GDA datasets can be obtained following the instructions in [edge-oriented graph](https://github.com/fenchri/edge-oriented-graph). The expected structure of files is:
@@ -24,6 +26,8 @@ CGM2IR
 |    |    |-- train_distant.json
 |    |    |-- dev.json
 |    |    |-- test.json
+|    |    |-- rel_info.json
+|    |    |-- label_map.json
 |    |-- cdr
 |    |    |-- train_filter.data
 |    |    |-- dev_filter.data
